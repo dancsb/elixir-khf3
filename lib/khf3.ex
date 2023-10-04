@@ -51,7 +51,17 @@ defmodule Khf3 do
 
     err_rows = tents_in_rows |> Enum.with_index |> Enum.filter(fn {cnt, index} -> cnt != Enum.at(elem(pd, 0), index) and Enum.at(elem(pd, 0), index) >= 0 end) |> Enum.map(fn {_cnt, index} -> index + 1 end)
     err_cols = tents_in_cols |> Enum.with_index |> Enum.filter(fn {cnt, index} -> cnt != Enum.at(elem(pd, 1), index) and Enum.at(elem(pd, 1), index) >= 0 end) |> Enum.map(fn {_cnt, index} -> index + 1 end)
-    {%{err_rows: err_rows}, %{err_cols: err_cols}, %{err_touch: []}}
+
+    err_touch = tents |> Enum.filter(fn {row, col} -> Enum.member?(tents, {row - 1, col}) or
+                                                      Enum.member?(tents, {row, col + 1}) or
+                                                      Enum.member?(tents, {row + 1, col}) or
+                                                      Enum.member?(tents, {row, col - 1}) or
+                                                      Enum.member?(tents, {row - 1, col + 1}) or
+                                                      Enum.member?(tents, {row - 1, col - 1}) or
+                                                      Enum.member?(tents, {row + 1, col + 1}) or
+                                                      Enum.member?(tents, {row + 1, col - 1}) end) |> Enum.uniq()
+
+    {%{err_rows: err_rows}, %{err_cols: err_cols}, %{err_touch: err_touch}}
   end
 
 end
